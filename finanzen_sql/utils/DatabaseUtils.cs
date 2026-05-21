@@ -24,7 +24,7 @@ public class DatabaseUtils {
 
     public MySqlConnection InitDatabase()
     {
-        string json = File.ReadAllText("auth/auth.json");
+        string json = File.ReadAllText("Auth/Auth.json");
         DatabaseConfig? config = JsonSerializer.Deserialize<DatabaseConfig>(json);
 
         if (config == null) throw new Exception("Invalid database configuration JSON.");
