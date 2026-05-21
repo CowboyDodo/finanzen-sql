@@ -56,9 +56,9 @@ public class DatabaseUtils {
     {
         DatabaseTables dbTables = new();
 
+        ExecuteCreateQueries(dbTables.CreateTableUser(), connection);
         ExecuteCreateQueries(dbTables.CreateTableCategory(), connection);
-        ExecuteCreateQueries(dbTables.CreateTableRevenue(), connection);
-        ExecuteCreateQueries(dbTables.CreateTableSpending(), connection);
+        ExecuteCreateQueries(dbTables.CreateTableTransaction(), connection);
 
         connection.Close();
     }

@@ -8,43 +8,45 @@ public class DatabaseTables
     public string CreateTableCategory()
     {
         return @"
-            CREATE TABLE IF NOT EXISTS Category (
+            CREATE TABLE IF NOT EXISTS Kategorie (
                 id INT NOT NULL AUTO_INCREMENT,
                 name VARCHAR(64) NOT NULL,
+                typ ENUM('Einname', 'Ausgabe'),
                 PRIMARY KEY (id)
             );
         ";
     }
 
-    public string CreateTableRevenue()
+    public string CreateTableTransaction()
     {
         return @"
-            CREATE TABLE IF NOT EXISTS Revenue (
+            CREATE TABLE IF NOT EXISTS Transaktion (
                 id INT NOT NULL AUTO_INCREMENT,
-                amount DECIMAL NOT NULL,
-                categoryId INT,
-                timeAdded DATETIME DEFAULT CURRENT_TIMESTAMP,
+                betrag DECIMAL NOT NULL,
+                beschreibung VARCHAR(255),
+                istWiederkehrend bool DEFAULT false,
+                user_id INT NOT NULL,
+                kategorie_id INT,
+                datum DATETIME DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
-                CONSTRAINT revenue_category
-                    FOREIGN KEY (categoryId)
-                    REFERENCES Category(id)
+                CONSTRAINT transaktion_kategorie
+                    FOREIGN KEY (kategorie_id)
+                    REFERENCES Kategorie(id),
+                CONSTRAINT transaktion_user
+                    FOREIGN KEY (user_id)
+                    REFERENCES User(id)
             );
         ";
     }
 
-    public string CreateTableSpending()
+    public string CreateTableUser()
     {
         return @"
-            CREATE TABLE IF NOT EXISTS Spending (
+            CREATE TABLE IF NOT EXISTS User (
                 id INT NOT NULL AUTO_INCREMENT,
-                amount DECIMAL NOT NULL,
-                recipient VARCHAR(64) NOT NULL,
-                categoryId INT,
-                timeAdded DATETIME DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id),
-                CONSTRAINT spending_category
-                    FOREIGN KEY (categoryId)
-                    REFERENCES Category(id)
+                username VARCHAR(64) NOT NULL,
+                passwort VARCHAR(255) NOT NULL,
+                PRIMARY KEY (id)
             );
         ";
     }
