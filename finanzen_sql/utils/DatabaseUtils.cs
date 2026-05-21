@@ -5,6 +5,9 @@ using finanzen_sql.classes;
 using System.Data;
 
 namespace finanzen_sql.utils;
+/// <summary>
+/// Stores the database connection settings that are loaded from the auth.json file
+/// </summary>
 public class DatabaseConfig
 {
     public string server { get; set; } = "";
@@ -12,6 +15,10 @@ public class DatabaseConfig
     public string user { get; set; } = "";
     public string password { get; set; } = "";
 }
+
+/// <summary>
+/// Database Logic and interface between frontend and database
+/// </summary>
 public class DatabaseUtils {
     protected MySqlConnection? connection;
 
@@ -22,21 +29,32 @@ public class DatabaseUtils {
 
         if (config == null) throw new Exception("Invalid database configuration JSON.");
 
-        connection = new MySqlConnection(
-            $"SERVER={config.server};" +
-            $"DATABASE={config.database};" +
-            $"UID={config.user};" +
-            $"PASSWORD={config.password}"
-        );
+        try
+        {
+            connection = new MySqlConnection(
+                $"SERVER={config.server};" +
+                $"DATABASE={config.database};" +
+                $"UID={config.user};" +
+                $"PASSWORD={config.password}"
+            );
 
-        connection.Open();
+            connection.Open();
+        }
+        catch (Exception error)
+        {
+            throw new Exception("Failed to connect to the database. Please check your configuration.", error);
+        }
 
         return connection;
     }
 
+    /// <summary>
+    /// Creates the database tables and closes the provided connection
+    /// </summary>
+    /// <param name="connection">An open MySqlConnection used to execute the command</param>
     public void CreateTables(MySqlConnection connection)
     {
-        DatabaseTables dbTables = new DatabaseTables();
+        DatabaseTables dbTables = new();
 
         ExecuteCreateQueries(dbTables.CreateTableCategory(), connection);
         ExecuteCreateQueries(dbTables.CreateTableRevenue(), connection);
@@ -45,9 +63,14 @@ public class DatabaseUtils {
         connection.Close();
     }
 
+    /// <summary>
+    /// Executes the provided SQL CREATE statement
+    /// </summary>
+    /// <param name="sqlQuery">SQL statement containing the querie to execute</param>
+    /// <param name="connection">Open MySqlConnection used to execute the command</param>
     public void ExecuteCreateQueries(string sqlQuery, MySqlConnection connection)
     {
-        using MySqlCommand command = new MySqlCommand(sqlQuery, connection);
+        using MySqlCommand command = new(sqlQuery, connection);
 
         command.ExecuteNonQuery();
     }

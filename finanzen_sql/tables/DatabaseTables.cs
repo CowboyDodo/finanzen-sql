@@ -1,5 +1,8 @@
 namespace finanzen_sql.classes;
 
+/// <summary>
+/// SQL queries for table creations
+/// </summary>
 public class DatabaseTables
 {
     public string CreateTableCategory()
