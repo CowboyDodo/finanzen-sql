@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using MySqlConnector;
-using System.Diagnostics;
 
 
 namespace finanzen_sql.Windows;
@@ -42,10 +41,13 @@ public partial class LoginWindow : Window
 
         bool result = dbUtils.LoginUser(conn, username, password);
 
-        if (result != false)
+        if (result == false)
         {
-            MessageBox.Show("Das Passwort ist falsch");
+            MessageBox.Show("Das Passwort oder der Username ist falsch");
             return;
         }
+
+        MessageBox.Show("Du hast dich erfolgreich eingeloggt");
+        return;
     }
 }
