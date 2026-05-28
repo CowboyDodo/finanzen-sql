@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <None Remove="Auth\auth.json" />
+    <None Remove="Images\coin.png" />
+    <None Remove="Images\dodo.png" />
     <None Remove="Tables\CreateCategory.sql" />
   </ItemGroup>
 
@@ -20,14 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="GitHub.Copilot.SDK" Version="0.3.0" />
     <PackageReference Include="MySql.Data" Version="9.7.0" />
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Styles\" />
-    <Folder Include="Views\" />
+    <Resource Include="Images\coin.png" />
+    <Resource Include="Images\dodo.png" />
   </ItemGroup>
 
 </Project>
