@@ -1,0 +1,97 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="LoginButtonStyle"
+           TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+        <Setter Property="Background" Value="#FE6584"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Width="100"
+                            Height="25"
+                            CornerRadius="12"
+                            Background="{TemplateBinding Background}">
+                        <ContentPresenter
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver"
+                     Value="True">
+                <Setter Property="Background"
+                        Value="#FF4C6B"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+	<Style x:Key="RegistrationButtonStyle"
+		   TargetType="Button">
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="FontSize" Value="14"/>
+		<Setter Property="FontWeight" Value="Medium"/>
+		<Setter Property="FontFamily" Value="Bahnschrift"/>
+		<Setter Property="Background" Value="#BDBDBD"/>
+		<Setter Property="Cursor" Value="Hand"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Border Width="100"
+                            Height="25"
+                            CornerRadius="12"
+                            Background="{TemplateBinding Background}">
+						<ContentPresenter
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"/>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Style.Triggers>
+			<Trigger Property="IsMouseOver"
+                     Value="True">
+				<Setter Property="Background"
+                        Value="#D6D6D6"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+    <Style x:Key="HomepageButtonStyle"
+	   TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+        <Setter Property="Background" Value="#868ED1"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Width="100"
+                        Height="20"
+                        CornerRadius="12"
+                        Background="{TemplateBinding Background}">
+                        <ContentPresenter
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver"
+                 Value="True">
+                <Setter Property="Background"
+                    Value="#959DE6"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>
