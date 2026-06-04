@@ -1,14 +1,14 @@
-﻿<UserControl x:Class="finanzen_sql.Builds.TopBar"
+﻿<UserControl x:Class="finanzen_sql.Builds.TopBarBuild"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:finanzen_sql.Builds"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="800">
+             d:DesignHeight="500" d:DesignWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="30"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -35,29 +35,36 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
             <Button Content="Homepage"
+                    FontSize="14"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Click="RouteToHomepageClick"
-                    Style="{StaticResource HomepageButtonStyle}"/>    
+                    Style="{StaticResource HomepageButtonStyle}"/>
 
-            <TextBlock Text="Einnahmen" 
-                   Grid.Column="2"
-                   Style="{StaticResource TopbarTextBlock}"/>
+            <Button Content="Übersicht"
+                    FontSize="14"
+                    Grid.Column="2"
+                    Click="CheckIfFinanzDodo"
+                    Style="{StaticResource TopBarButtonStyle}"/>
 
-            <TextBlock Text="Ausgaben" 
-                   Grid.Column="3"
-                   Style="{StaticResource TopbarTextBlock}"/>
+            <Button Content="Transaktionen"
+                    FontSize="14"
+                    Grid.Column="3"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Left"
+                    Margin="10,0,0,0"
+                    Click="CheckIfFinanzDodo"
+                    Style="{StaticResource TopBarButtonStyle}"/>
 
             <Button Content="X"
-                Foreground="LightGray"
-                Background="Transparent"
-                BorderThickness="0"
-                Grid.Column="10"
-                Click="CloseClick"
-                Cursor="Hand"/>
+                    FontSize="14"
+                    Grid.Column="11"
+                    Click="CloseClick"
+                    Style="{StaticResource CloseButtonStyle}"/>
         </Grid>
     </Grid>
 </UserControl>

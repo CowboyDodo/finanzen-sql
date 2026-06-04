@@ -1,0 +1,94 @@
+﻿<Window x:Class="finanzen_sql.Windows.FinanzDodoWindow"
+        xmlns:controls="clr-namespace:finanzen_sql.Builds"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="Finanzübersicht"
+        Height="500"
+        Width="1000"
+        Background="#181735"
+        WindowStyle="None"
+        ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="White"/>
+        <Border Grid.Column="1" Background="White"/>
+
+        <Grid Background="#0F0F2D"
+              Grid.ColumnSpan="5">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Homepage"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Click="RouteToHomepageClick"
+                Style="{StaticResource HomepageButtonStyle}"/>
+
+            <Button Content="Übersicht"
+                    Grid.Column="2"
+                    FontSize="14"
+                    Click="OverviewClick"
+                    Style="{StaticResource TopBarButtonStyle}"/>
+
+            <Button Content="Transaktionen"
+                    Grid.Column="3"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Left"
+                    Margin="10,0,0,0"
+                    FontSize="14"
+                    Click="TransactionsClick"
+                    Style="{StaticResource TopBarButtonStyle}"/>
+
+            <Button Content="Hinzufügen"
+                    Grid.Column="4"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Left"
+                    Margin="30,0,0,0"
+                    FontSize="14"
+                    Click="AddClick"
+                    Style="{StaticResource TopBarButtonStyle}"/>
+
+            <Button Content="X"
+                    Grid.Column="10"
+                    Click="CloseClick"
+                    Style="{StaticResource CloseButtonStyle}"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid x:Name="OverviewPanel">
+            </Grid>
+
+            <Grid x:Name="TransactionPanel"
+                  Visibility="Collapsed">
+                <controls:TransactionPanelBuild x:Name="BuildPanelTransaction"/>
+            </Grid>
+
+            <Grid x:Name="AddPanel"
+                  Visibility="Collapsed">
+                <controls:AddPanelBuild x:Name="BuildAddPanel"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

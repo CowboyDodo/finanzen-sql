@@ -7,14 +7,14 @@
         xmlns:local="clr-namespace:finanzen_sql"
         mc:Ignorable="d"
         Title="Finanzübersicht"
-        Height="400"
-        Width="800"
+        Height="500"
+        Width="1000"
         WindowStyle="None"
         ResizeMode="NoResize"
         Background="#181735">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -23,8 +23,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-
-        <controls:TopBar Grid.Row="0"
+        <controls:TopBarBuild Grid.Row="0"
                          Grid.ColumnSpan="2"/>
 
         <StackPanel Grid.Row="1"
@@ -32,16 +31,18 @@
                     Margin="60,0,60,0">
 
             <StackPanel>
+
                 <StackPanel Orientation="Horizontal"
                                 Margin="0,0,0,20">
-
+                    
                     <TextBlock Text="FinanzDodo - Deine Finanzapp" 
                        Foreground="White" 
-                       FontSize="20"
+                       FontSize="25"
                        FontWeight="Bold"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
                        FontFamily="Bahnschrift"/>
+                    
                 </StackPanel>
 
                 <TextBlock Text="Behalte" 
@@ -64,7 +65,7 @@
 
                 <TextBlock Text="Registriere oder melde dich an, um ab heute deine Finanzen jederzeit unter Kontrolle zu haben" 
                            Foreground="LightGray" 
-                           FontSize="14"
+                           FontSize="15"
                            FontWeight="Normal"
                            TextWrapping="Wrap"
                            FontFamily="Bahnschrift"
@@ -72,21 +73,23 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
+                
                 <Button Content="Login" 
                         Click="LoginClick"
-                        Margin="0,10,0,0"
+                        Margin="0,20,0,0"
                         Style="{StaticResource LoginButtonStyle}"/>
                 <Button Content="Registrieren"
-                        Margin="5,10,0,0"
+                        Margin="10,20,0,0"
                         Click="RegistrationClick"
                         Style="{StaticResource RegistrationButtonStyle}"/>
+                
             </StackPanel>
+            
         </StackPanel>
         <Image Source="/Images/dodo.png"
                RenderOptions.BitmapScalingMode="Fant"
                Grid.Column="1"
-               Margin="10,10,10,10"
+               Margin="5,5,5,5"
                Grid.Row="1"/>
-
     </Grid>
 </Window>

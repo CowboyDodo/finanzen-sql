@@ -14,15 +14,28 @@
 
 	<Style x:Key="LoginTextBox"
 		   TargetType="TextBox">
-		<Setter Property="Height" Value="20"/>
+		<Setter Property="Height" Value="23"/>
 		<Setter Property="Width" Value="250"/>
-		<Setter Property="Margin" Value="0,10,0,0"/>
-	</Style>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="0,10,0,0"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+    </Style>
 	
 	<Style x:Key="PasswordBox"
 		   TargetType="PasswordBox">
-		<Setter Property="Height" Value="20"/>
+		<Setter Property="Height" Value="23"/>
 		<Setter Property="Width" Value="250"/>
-		<Setter Property="Margin" Value="0,10,0,0"/>
-	</Style>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="0,10,0,0"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+    </Style>
+
+    <Style x:Key="AddTextBox"
+           TargetType="TextBox">
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="0,5,0,10"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+    </Style>
 </ResourceDictionary>
+

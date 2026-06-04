@@ -11,7 +11,7 @@ public class DatabaseTables
             CREATE TABLE IF NOT EXISTS Kategorie (
                 id INT NOT NULL AUTO_INCREMENT,
                 name VARCHAR(64) NOT NULL,
-                typ ENUM('Einname', 'Ausgabe'),
+                typ ENUM('Einnahme', 'Ausgabe'),
                 PRIMARY KEY (id)
             );
         ";
@@ -27,7 +27,7 @@ public class DatabaseTables
                 istWiederkehrend bool DEFAULT false,
                 user_id INT NOT NULL,
                 kategorie_id INT,
-                datum DATETIME DEFAULT CURRENT_TIMESTAMP,
+                datum DATE,
                 PRIMARY KEY (id),
                 CONSTRAINT transaktion_kategorie
                     FOREIGN KEY (kategorie_id)

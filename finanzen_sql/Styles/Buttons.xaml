@@ -5,7 +5,7 @@
     <Style x:Key="LoginButtonStyle"
            TargetType="Button">
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="FontFamily" Value="Bahnschrift"/>
         <Setter Property="Background" Value="#FE6584"/>
@@ -13,8 +13,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Width="100"
-                            Height="25"
+                    <Border Width="110"
+                            Height="30"
                             CornerRadius="12"
                             Background="{TemplateBinding Background}">
                         <ContentPresenter
@@ -33,41 +33,41 @@
         </Style.Triggers>
     </Style>
 
-	<Style x:Key="RegistrationButtonStyle"
+    <Style x:Key="RegistrationButtonStyle"
 		   TargetType="Button">
-		<Setter Property="Foreground" Value="White"/>
-		<Setter Property="FontSize" Value="14"/>
-		<Setter Property="FontWeight" Value="Medium"/>
-		<Setter Property="FontFamily" Value="Bahnschrift"/>
-		<Setter Property="Background" Value="#BDBDBD"/>
-		<Setter Property="Cursor" Value="Hand"/>
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="Button">
-					<Border Width="100"
-                            Height="25"
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+        <Setter Property="Background" Value="#BDBDBD"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Width="110"
+                            Height="30"
                             CornerRadius="12"
                             Background="{TemplateBinding Background}">
-						<ContentPresenter
+                        <ContentPresenter
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"/>
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-		<Style.Triggers>
-			<Trigger Property="IsMouseOver"
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver"
                      Value="True">
-				<Setter Property="Background"
+                <Setter Property="Background"
                         Value="#D6D6D6"/>
-			</Trigger>
-		</Style.Triggers>
-	</Style>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <Style x:Key="HomepageButtonStyle"
-	   TargetType="Button">
+	       TargetType="Button">
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="FontFamily" Value="Bahnschrift"/>
         <Setter Property="Background" Value="#868ED1"/>
@@ -93,5 +93,24 @@
                     Value="#959DE6"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <Style x:Key="CloseButtonStyle"
+           TargetType="Button">
+        <Setter Property="Foreground" Value="LightGray"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style x:Key="TopBarButtonStyle"
+           TargetType="Button">
+        <Setter Property="Foreground" Value="LightGray"/>
+        <Setter Property="FontFamily" Value="Bahnschrift"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
     </Style>
 </ResourceDictionary>

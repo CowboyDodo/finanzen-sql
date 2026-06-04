@@ -1,0 +1,94 @@
+﻿<Window x:Class="finanzen_sql.Windows.EditTransactionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Transaktion bearbeiten"
+        Height="400"
+        Width="420"
+        Background="#181735"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+
+    <Border Background="#1B1F3A"
+            CornerRadius="12"
+            Padding="20"
+            Margin="10">
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+
+            <StackPanel>
+
+                <TextBlock Grid.Column="0"
+                           Text="Transaktion bearbeiten"
+                           Foreground="White"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           FontFamily="Bahnschrift"
+                           Margin="0,0,0,10"/>
+
+                <TextBlock Text="Betrag"
+                           Foreground="#B8BFD8"/>
+                <TextBox x:Name="TxtAmount"
+                         Style="{StaticResource AddTextBox}"/>
+
+                <TextBlock Text="Beschreibung"
+                           Foreground="#B8BFD8"/>
+                <TextBox x:Name="TxtDescription"
+                         Style="{StaticResource AddTextBox}"/>
+
+                <TextBlock Text="Kategorie"
+                           Foreground="#B8BFD8"/>
+                <ComboBox x:Name="CmbCategory"
+                          Height="25"
+                          Margin="0,5,0,10"
+                          DropDownOpened="ShowCategoryNames"/>
+
+                <TextBlock Text="Datum"
+                           Foreground="#B8BFD8"/>
+                <DatePicker x:Name="DpDate"
+                            Height="25"
+                            Margin="0,5,0,10"/>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,5,0,10">
+
+                    <CheckBox x:Name="CbIsIncome"
+                              Content="Einnahme"
+                              Foreground="White"
+                              Margin="0,0,20,0"/>
+
+                    <CheckBox x:Name="CbIsRecurring"
+                              Content="Dauerauftrag"
+                              Foreground="White"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,15,0,0">
+
+                <Button Content="Abbrechen"
+                        Margin="0,0,10,0"
+                        Click="CancelClick"
+                        Style="{StaticResource LoginButtonStyle}"/>
+
+                <Button Content="Speichern"
+                        Background="#3A4A7A"
+                        Foreground="White"
+                        Click="SaveClick"
+                        Style="{StaticResource RegistrationButtonStyle}"/>
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</Window>

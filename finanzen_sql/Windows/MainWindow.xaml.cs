@@ -8,15 +8,15 @@ namespace finanzen_sql.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly DatabaseUtils dbUtils;
+        private readonly DatabaseUtils _dbUtils;
         public MainWindow(DatabaseUtils databaseUtils)
         {
             InitializeComponent();
-            dbUtils = databaseUtils;
+            _dbUtils = databaseUtils;
         }
     private void LoginClick(object sender, RoutedEventArgs e)
         {
-            LoginWindow login = new(dbUtils)
+            LoginWindow login = new(_dbUtils)
             {
                 // set window in the center
                 WindowStartupLocation = WindowStartupLocation.CenterScreen
@@ -28,7 +28,10 @@ namespace finanzen_sql.Windows
 
         private void RegistrationClick(object sender, RoutedEventArgs e)
         {
-            RegistrationWindow registration = new(dbUtils);
+            RegistrationWindow registration = new(_dbUtils)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
             registration.Show();
 
             this.Close();

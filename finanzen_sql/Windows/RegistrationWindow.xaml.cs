@@ -8,16 +8,16 @@ namespace finanzen_sql.Windows;
 
 public partial class RegistrationWindow : Window
 {
-    private readonly DatabaseUtils dbUtils;
+    private readonly DatabaseUtils _dbUtils;
     public RegistrationWindow(DatabaseUtils databaseUtils)
     {
         InitializeComponent();
-        dbUtils = databaseUtils;
+        _dbUtils = databaseUtils;
     }
 
     private void RouteToLoginClick(object sender, RoutedEventArgs e)
     {
-        LoginWindow login = new(dbUtils)
+        LoginWindow login = new(_dbUtils)
         {
             // fix window in the center
             WindowStartupLocation = WindowStartupLocation.CenterScreen
@@ -46,8 +46,23 @@ public partial class RegistrationWindow : Window
         }
 
         // using -> after execution dispose conncetion
-        using MySqlConnection conn = dbUtils.CreateConnection();
+        using MySqlConnection conn = _dbUtils.CreateConnection();
 
-        dbUtils.CreateUser(conn, username, password);
+        _dbUtils.CreateUser(conn, username, password);
+
+        int userID = _dbUtils.GetUserID(conn, username);
+
+        RouteToFinanzDodoClick(sender, e, userID);
+    }
+
+    private void RouteToFinanzDodoClick(object sender, RoutedEventArgs e, int userID)
+    {
+        FinanzDodoWindow finanzDodo = new(_dbUtils, userID)
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen
+        };
+        finanzDodo.Show();
+
+        this.Close();
     }
 }
