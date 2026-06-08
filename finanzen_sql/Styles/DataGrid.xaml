@@ -29,7 +29,7 @@
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
     </Style>
 
     <Style x:Key="DataGridTransactionRowStyle"

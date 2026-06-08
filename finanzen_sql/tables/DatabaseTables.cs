@@ -24,10 +24,10 @@ public class DatabaseTables
                 id INT NOT NULL AUTO_INCREMENT,
                 betrag DECIMAL NOT NULL,
                 beschreibung VARCHAR(255),
-                istWiederkehrend bool DEFAULT false,
+                istWiederkehrend BOOLEAN DEFAULT false,
                 user_id INT NOT NULL,
                 kategorie_id INT,
-                datum DATE,
+                datum DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
                 CONSTRAINT transaktion_kategorie
                     FOREIGN KEY (kategorie_id)
@@ -46,6 +46,7 @@ public class DatabaseTables
                 id INT NOT NULL AUTO_INCREMENT,
                 username VARCHAR(64) NOT NULL,
                 passwort VARCHAR(255) NOT NULL,
+                budget DECIMAL DEFAULT 0,
                 PRIMARY KEY (id)
             );
         ";

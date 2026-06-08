@@ -15,9 +15,15 @@
                 Margin="10">
 
             <Grid>
+                <!--TopBar-->
                 <StackPanel>
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
@@ -25,34 +31,65 @@
                         </Grid.ColumnDefinitions>
                         
                         <TextBlock Text="Filter"
+                                   Grid.Row="0"
                                    Grid.Column="0"
                                    Foreground="LightGray"
                                    FontSize="24"/>
                         <ComboBox x:Name="CmbCategoryFilter"
+                                  Grid.Row="0"
                                   Grid.Column="1"
                                   DropDownOpened="CategoryFilter_DropDownOpened"
-                                  DropDownClosed="CmbCategoryFilter_DropDownClosed"
+                                  DropDownClosed="CmbFilter_DropDownClosed"
                                   Style="{StaticResource ComboBoxFilter}"/>
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text="Kategorie"
+                                   Margin="10,0,0,0"
+                                   Style="{StaticResource StandardizedTextBlock}"/>
+                        
                         <ComboBox x:Name="CmbTypeFilter"
+                                  Grid.Row="0"
                                   Grid.Column="2"
                                   DropDownOpened="TypeFilter_DropDownOpened"
-                                  DropDownClosed="CmbTypeFilter_DropDownClosed"
+                                  DropDownClosed="CmbFilter_DropDownClosed"
                                   Style="{StaticResource ComboBoxFilter}"/>
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="2"
+                                   Text="Typ"
+                                   Margin="10,0,0,0"
+                                   Style="{StaticResource StandardizedTextBlock}"/>
+
+                        <ComboBox x:Name="CmbRecurringFilter"
+                                  Grid.Row="0"
+                                  Grid.Column="3"
+                                  DropDownOpened="CmbRecurringFilter_DropDownOpened"
+                                  DropDownClosed="CmbFilter_DropDownClosed"
+                                  Style="{StaticResource ComboBoxFilter}"/>
+                        
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="3"
+                                   Text="Dauerauftrag"
+                                   Margin="10,0,0,0"
+                                   Style="{StaticResource StandardizedTextBlock}"/>
+
                         <Button Content="Zurücksetzen"
-                                Grid.Column="4"
+                                Grid.Column="5"
                                 Margin="10,0,0,0"
                                 Click="ClearFiltersClick"
                                 Style="{StaticResource RegistrationButtonStyle}"/>
                         </Grid>
                 </StackPanel>
-
+                
+                <!--Transaction Panel-->
                 <DataGrid x:Name="DataGridTransaction"
                           AlternationCount="2"
-                          AutoGenerateColumns="True"
+                          AutoGenerateColumns="False"
+                          HorizontalAlignment="Center"
                           Style="{StaticResource DataGridTransaction}"
                           ColumnHeaderStyle="{StaticResource DataGridTransactionColumnHeaderStyle}"
                           RowStyle="{StaticResource DataGridTransactionRowStyle}">
                     
+                    <!--Table definitons-->
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Aktionen">
                             <DataGridTemplateColumn.CellTemplate>
@@ -75,6 +112,11 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Betrag" Binding="{Binding Amount}"/>
+                        <DataGridTextColumn Header="Notiz" Binding="{Binding Description}"/>
+                        <DataGridTextColumn Header="Kategorie" Binding="{Binding CategoryName}"/>
+                        <DataGridTextColumn Header="Datum" Binding="{Binding Date, StringFormat=dd.MM.yyyy}"/>
+                        <DataGridTextColumn Header="Dauerauftrag" Binding="{Binding IsRecurring}"/>
                     </DataGrid.Columns>
                 </DataGrid>
 

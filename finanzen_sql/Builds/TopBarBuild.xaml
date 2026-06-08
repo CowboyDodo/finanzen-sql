@@ -39,20 +39,17 @@
             </Grid.ColumnDefinitions>
 
             <Button Content="Homepage"
-                    FontSize="14"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Click="RouteToHomepageClick"
                     Style="{StaticResource HomepageButtonStyle}"/>
 
             <Button Content="Übersicht"
-                    FontSize="14"
                     Grid.Column="2"
                     Click="CheckIfFinanzDodo"
                     Style="{StaticResource TopBarButtonStyle}"/>
 
             <Button Content="Transaktionen"
-                    FontSize="14"
                     Grid.Column="3"
                     Grid.ColumnSpan="2"
                     HorizontalAlignment="Left"
@@ -61,7 +58,6 @@
                     Style="{StaticResource TopBarButtonStyle}"/>
 
             <Button Content="X"
-                    FontSize="14"
                     Grid.Column="11"
                     Click="CloseClick"
                     Style="{StaticResource CloseButtonStyle}"/>

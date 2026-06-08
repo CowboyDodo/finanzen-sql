@@ -1,6 +1,9 @@
 ﻿using finanzen_sql.classes;
+using finanzen_sql.Tables;
+using Google.Protobuf;
 using MySqlConnector;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -16,13 +19,6 @@ public class DatabaseConfig
     public string database { get; set; } = "";
     public string user { get; set; } = "";
     public string password { get; set; } = "";
-}
-
-public class Category
-{
-    public int id { get; set; }
-    public required string name { get; set; }
-    public required string typ { get; set; }
 }
 
 /// <summary>
@@ -95,7 +91,7 @@ public class DatabaseUtils
     /// <param name="connection">Current MySqlConnection used to execute the command</param>
     /// <param name="username">username of login guest</param>
     /// <returns>True if the username already exists; otherwise false.</returns>
-    private bool CheckUser(MySqlConnection connection, string username)
+    public bool CheckUser(MySqlConnection connection, string username)
     {
         string query = "SELECT username FROM User WHERE username = @username";
 
@@ -117,16 +113,10 @@ public class DatabaseUtils
     /// <param name="username">username of login guest</param>
     /// <param name="password">password of login guest</param>
     /// <seealso cref="https://claudiobernasconi.ch/blog/how-to-hash-passwords-with-bcrypt-in-csharp/"/>
-    public void CreateUser(MySqlConnection connection, string username, string password)
+    public bool CreateUser(MySqlConnection connection, string username, string password)
     {
         // removing whitespaces
         username = username.Trim();
-
-        if (CheckUser(connection, username))
-        {
-            MessageBox.Show("Es gibt bereits einen solchen User");
-            return;
-        }
 
         string query = "INSERT INTO User (username, passwort) VALUES (@username,@password)";
         // 13 means a workfactor of 13 -> number of iterations to calculate the hash; the higher the better but also slower
@@ -141,13 +131,12 @@ public class DatabaseUtils
         try
         {
             cmd.ExecuteNonQuery();
-            MessageBox.Show("Du hast dich erfolgreich registriert");
-            return;
+            return true;
         }
         catch (Exception error)
         {
             MessageBox.Show($"Fehler: {error.Message}");
-            return;
+            return false;
         }
     }
 
@@ -181,33 +170,39 @@ public class DatabaseUtils
     /// <param name="connection"></param>
     /// <param name="user_id"></param>
     /// <returns>Table</returns>
-    public DataTable GetTransactions(
+    public List<Transaction> GetTransactions(
         MySqlConnection connection,
         int userId,
         int pageSize,
         int offset,
-        int? categotyId = null,
-        string typ = ""
+        int? categoryId = null,
+        string type = "",
+        string isRecurring = ""
     )
     {
         // LEFT JOIIN is used to also get transactions without a category, which would be lost with an INNER JOIN -> null value doesnt exists in boht tables
         // COALESCE is used to display "Keine Angabe" and "-" instead of empty values for those transactions
         StringBuilder query = new(@"
             SELECT
-                t.id AS Id,
-                t.betrag AS Betrag,
-                t.beschreibung AS Beschreibung,
-                COALESCE(k.name, 'Keine Angabe') AS Kategorie,
-                COALESCE(k.typ, '-') AS Typ,
-                t.datum AS Datum
+                t.id AS TransactionID,
+                t.betrag AS Amount,
+                t.beschreibung AS Description,
+                t.datum AS Date,
+                t.istWiederkehrend AS Recurring,
+                t.user_id AS UserID,
+                t.kategorie_id AS CategoryID,
+                COALESCE(k.name, 'Keine Angabe') AS CategoryName,
+                COALESCE(k.typ, '-') AS CategoryType
             FROM transaktion t
             LEFT JOIN kategorie k
                 ON t.kategorie_id = k.id
             WHERE t.user_id = @userId
         ");
-
-        if (categotyId != null) query.Append("AND k.id = @categoryId ");
-        if (typ != "") query.Append("AND k.typ = @typ");
+        
+        // add filter to string if variables not null
+        if (categoryId != null) query.Append("AND k.id = @categoryId ");
+        if (type != "") query.Append("AND k.typ = @type ");
+        if (isRecurring != "") query.Append("AND t.istWiederkehrend = @isRecurring");
 
         query.Append(@"
             ORDER BY t.id DESC
@@ -219,53 +214,98 @@ public class DatabaseUtils
         cmd.Parameters.AddWithValue("@pageSize", pageSize);
         cmd.Parameters.AddWithValue("@offset", offset);
 
-        if (categotyId != null) cmd.Parameters.AddWithValue("@categoryId", categotyId);
-        if (typ != "") cmd.Parameters.AddWithValue("@typ", typ);
+        if (categoryId != null) cmd.Parameters.AddWithValue("@categoryId", categoryId);
+        if (type != "") cmd.Parameters.AddWithValue("@type", type);
+        if (isRecurring == "ja") cmd.Parameters.AddWithValue("@isRecurring", true);
+        if (isRecurring == "nein") cmd.Parameters.AddWithValue("@isRecurring", false);
 
-        using MySqlDataAdapter adapter = new(cmd);
+        using MySqlDataReader reader = cmd.ExecuteReader();
 
-        DataTable table = new();
-        adapter.Fill(table);
+        List<Transaction> allTransactions = new();
 
-        return table;
+        while (reader.Read())
+        {
+            allTransactions.Add(new Transaction
+            {
+                Id = reader.GetInt32("TransactionID"),
+                Amount = reader.GetDecimal("Amount"),
+                Description = reader.IsDBNull("Description") ? "" : reader.GetString("Description"),
+                IsRecurring = reader.GetBoolean("Recurring"),
+                UserID = reader.GetInt32("UserID"),
+                CategoryID = reader.IsDBNull("CategoryID") ? 0 : reader.GetInt32("CategoryID"),
+                Date = reader.GetDateTime("Date"),
+                CategoryName = reader.GetString("CategoryName"),
+                CategoryType = reader.GetString("CategoryType")
+            });
+        }
+
+        return allTransactions;
     }
 
     /// <summary>
     /// Get the total count of transactions for a user, which is needed to calculate the number of pages for the pagination in the frontend
     /// </summary>
     /// <param name="connection"></param>
-    /// <param name="userId"></param>
+    /// <param name="userId">Id of the current user</param>
+    /// <param name="categoryId">Id of the category</param>
+    /// <param name="type">"Einahme" or "Ausgabe"</param>
+    /// <param name="isRecurring">"ja" oder "nein"</param>
     /// <returns></returns>
-    public int GetTransactionCount(MySqlConnection connection, int userId)
+    public int GetTransactionCount(
+        MySqlConnection connection,
+        int userId,
+        int? categoryId = null,
+        string type = "",
+        string isRecurring = ""
+    )
     {
-        string query = @"
+        StringBuilder query = new(@"
             SELECT COUNT(*)
-            FROM transaktion
-            WHERE user_id = @userId";
+            FROM transaktion t
+            LEFT JOIN kategorie k ON t.kategorie_id = k.id
+            WHERE t.user_id = @userId
+        ");
 
-        using MySqlCommand cmd = new(query, connection);
+        // add filter to string if variables not null
+        if (categoryId != null) query.Append("AND t.kategorie_id = @categoryId ");
+        if (type != "") query.Append("AND k.typ = @type ");
+        if (isRecurring != "") query.Append("AND t.istWiederkehrend = @isRecurring");
+
+        using MySqlCommand cmd = new(query.ToString(), connection);
         cmd.Parameters.AddWithValue("@userId", userId);
+
+        if (categoryId != null) cmd.Parameters.AddWithValue("@categoryId", categoryId);
+        if (type != "") cmd.Parameters.AddWithValue("@type", type);
+        if (isRecurring == "ja") cmd.Parameters.AddWithValue("@isRecurring", true);
+        if (isRecurring == "nein") cmd.Parameters.AddWithValue("@isRecurring", false);
 
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
     /// <summary>
     /// Helps to get the user id of a user based on the username,
-    /// which is needed for other queries to get the transactions or push new transactions for the user
+    /// which is needed for the login/registration process
     /// </summary>
     /// <param name="connection"></param>
     /// <param name="username"></param>
     /// <returns></returns>
-    public int GetUserID(MySqlConnection connection, string username)
+    public User? GetUserByName(MySqlConnection connection, string username)
     {
-        string query = "SELECT id FROM user WHERE username = @username";
+        string query = "SELECT * FROM user WHERE username = @username";
 
         using MySqlCommand cmd = new(query, connection);
         cmd.Parameters.AddWithValue("@username", username.Trim());
 
-        object? result = cmd.ExecuteScalar();
+        using MySqlDataReader reader = cmd.ExecuteReader();
 
-        return Convert.ToInt32(result);
+        if (!reader.Read()) return null;
+
+        return new User { 
+            Id = reader.GetInt32("id"),
+            Username = reader.GetString("username"),
+            Password = reader.GetString("passwort"),
+            Budget = reader.GetDecimal("budget")
+        };
     }
 
     /// <summary>
@@ -287,9 +327,9 @@ public class DatabaseUtils
         {
             categories.Add(new Category
             {
-                id = result.GetInt32("id"),
-                name = result.GetString("name"),
-                typ = result.GetString("typ")
+                Id = result.GetInt32("id"),
+                Name = result.GetString("name"),
+                Type = result.GetString("typ")
             });
         }
 
@@ -300,21 +340,11 @@ public class DatabaseUtils
     /// Inserts a new transaction into the database.
     /// </summary>
     /// <param name="connection">Open MySQL database connection.</param>
-    /// <param name="userID">ID of the user who owns the transaction.</param>
-    /// <param name="amount">Transaction amount (positive or negative depending on type).</param>
-    /// <param name="description">Optional description of the transaction.</param>
-    /// <param name="isRecurring">Indicates whether the transaction is recurring.</param>
-    /// <param name="categoryID">Optional category ID. Can be null if no category is selected.</param>
-    /// <param name="date">Date of the transaction. If not provided by the caller, the current date should be used.</param>
+    /// <param name="transaction">Transaction class filled with parameters.</param>
     /// <returns>True if the transaction was successfully added; otherwise, false.</returns>
     public bool PushTransaction(
         MySqlConnection connection,
-        int userID,
-        decimal amount,
-        string description,
-        bool isRecurring,
-        int? categoryID,
-        DateTime? date
+        Transaction transaction
     )
     {
         string query = @"
@@ -322,12 +352,12 @@ public class DatabaseUtils
             VALUES (@userID, @amount, @description, @isRecurring, @categoryID, @date)";
 
         using MySqlCommand cmd = new(query, connection);
-        cmd.Parameters.AddWithValue("@userID", userID);
-        cmd.Parameters.AddWithValue("@amount", amount);
-        cmd.Parameters.AddWithValue("@description", description);
-        cmd.Parameters.AddWithValue("@isRecurring", isRecurring);
-        cmd.Parameters.AddWithValue("@categoryID", categoryID);
-        cmd.Parameters.AddWithValue("@date", date);
+        cmd.Parameters.AddWithValue("@userID", transaction.UserID);
+        cmd.Parameters.AddWithValue("@amount", transaction.Amount);
+        cmd.Parameters.AddWithValue("@description", transaction.Description);
+        cmd.Parameters.AddWithValue("@isRecurring", transaction.IsRecurring);
+        cmd.Parameters.AddWithValue("@categoryID", transaction.CategoryID);
+        cmd.Parameters.AddWithValue("@date", transaction.Date);
 
         try
         {
@@ -363,36 +393,27 @@ public class DatabaseUtils
     /// Edits an existing transaction in the database
     /// </summary>
     /// <param name="connection">Open MySQL database connection.</param>
-    /// <param name="userID">ID of the user who owns the transaction.</param>
-    /// <param name="amount">Transaction amount (positive or negative depending on type).</param>
-    /// <param name="description">Optional description of the transaction.</param>
-    /// <param name="isRecurring">Indicates whether the transaction is recurring.</param>
-    /// <param name="categoryID">Optional category ID. Can be null if no category is selected.</param>
-    /// <param name="date">Date of the transaction. If not provided by the caller, the current date should be used.</param>
+    /// <param name="transaction">Transaction class filled with parameters</param>
     /// <returns>True if the transaction was successfully added; otherwise, false.</returns>
     public bool EditTransaction(
         MySqlConnection connection,
-        int transactionID,
-        int userID,
-        decimal amount,
-        string description,
-        bool isRecurring,
-        int? categoryID,
-        DateTime? date
+        Transaction transaction
     )
     {
         string query = @"
             UPDATE transaktion 
             SET betrag = @amount, beschreibung = @description, istWiederkehrend = @isRecurring, kategorie_id = @categoryID, datum = @date
             WHERE id = @transactionID AND user_id = @userID";
+
         using MySqlCommand cmd = new(query, connection);
-        cmd.Parameters.AddWithValue("@transactionID", transactionID);
-        cmd.Parameters.AddWithValue("@userID", userID);
-        cmd.Parameters.AddWithValue("@amount", amount);
-        cmd.Parameters.AddWithValue("@description", description);
-        cmd.Parameters.AddWithValue("@isRecurring", isRecurring);
-        cmd.Parameters.AddWithValue("@categoryID", categoryID);
-        cmd.Parameters.AddWithValue("@date", date);
+        cmd.Parameters.AddWithValue("@transactionID", transaction.Id);
+        cmd.Parameters.AddWithValue("@userID", transaction.UserID);
+        cmd.Parameters.AddWithValue("@amount", transaction.Amount);
+        cmd.Parameters.AddWithValue("@description", transaction.Description);
+        cmd.Parameters.AddWithValue("@isRecurring", transaction.IsRecurring);
+        cmd.Parameters.AddWithValue("@categoryID", transaction.CategoryID);
+        cmd.Parameters.AddWithValue("@date", transaction.Date);
+
         try
         {
             cmd.ExecuteNonQuery();

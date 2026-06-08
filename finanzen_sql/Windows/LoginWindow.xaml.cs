@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using MySqlConnector;
+using finanzen_sql.Tables;
 
 
 namespace finanzen_sql.Windows;
@@ -50,14 +51,20 @@ public partial class LoginWindow : Window
 
         MessageBox.Show("Du hast dich erfolgreich eingeloggt");
 
-        int userID = _dbUtils.GetUserID(conn, username);
+        User? user = _dbUtils.GetUserByName(conn, username);
+        
+        if (user == null)
+        {
+            MessageBox.Show("Fehler beim Abrufen der Benutzerdaten");
+            return;
+        }
 
-        RouteToFinanzDodoClick(sender, e, userID);
+        RouteToFinanzDodoClick(sender, e, user);
     }
 
-    private void RouteToFinanzDodoClick(object sender, RoutedEventArgs e, int userID)
+    private void RouteToFinanzDodoClick(object sender, RoutedEventArgs e, User user)
     {
-        FinanzDodoWindow finanzDodo = new(_dbUtils, userID)
+        FinanzDodoWindow finanzDodo = new(_dbUtils, user)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen
         };

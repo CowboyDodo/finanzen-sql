@@ -24,7 +24,7 @@
         <Border Grid.Row="1" Background="#25253B"/>
 
         <controls:TopBarBuild Grid.Row="0"
-                         Grid.ColumnSpan="2"/>
+                              Grid.ColumnSpan="2"/>
 
         <StackPanel Grid.Row="1"
                     Grid.Column="0"

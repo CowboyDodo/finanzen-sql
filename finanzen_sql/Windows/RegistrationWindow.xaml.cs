@@ -2,6 +2,7 @@
 using System.Diagnostics.Eventing.Reader;
 using System.Windows;
 using MySqlConnector;
+using finanzen_sql.Tables;
 
 
 namespace finanzen_sql.Windows;
@@ -48,16 +49,32 @@ public partial class RegistrationWindow : Window
         // using -> after execution dispose conncetion
         using MySqlConnection conn = _dbUtils.CreateConnection();
 
-        _dbUtils.CreateUser(conn, username, password);
+        bool isRegistered = _dbUtils.CheckUser(conn, username);
+        if (isRegistered)
+        {
+            MessageBox.Show("Dieser Benutzername ist bereits vergeben");
+            return;
+        }
 
-        int userID = _dbUtils.GetUserID(conn, username);
+        bool isCreated = _dbUtils.CreateUser(conn, username, password);
+        if (!isCreated) return;
 
-        RouteToFinanzDodoClick(sender, e, userID);
+        MessageBox.Show("Du hast dich erfolgreich registriert");
+
+        User? user = _dbUtils.GetUserByName(conn, username);
+
+        if (user == null)
+        {
+            MessageBox.Show("Fehler beim Abrufen der Benutzerdaten");
+            return;
+        }
+
+        RouteToFinanzDodoClick(sender, e, user);
     }
 
-    private void RouteToFinanzDodoClick(object sender, RoutedEventArgs e, int userID)
+    private void RouteToFinanzDodoClick(object sender, RoutedEventArgs e, User user)
     {
-        FinanzDodoWindow finanzDodo = new(_dbUtils, userID)
+        FinanzDodoWindow finanzDodo = new(_dbUtils, user)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen
         };

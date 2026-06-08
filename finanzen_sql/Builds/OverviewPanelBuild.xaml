@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="finanzen_sql.Builds.OverviewPanelBuild"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:finanzen_sql.Builds"
+             mc:Ignorable="d" 
+             d:DesignHeight="500"
+             d:DesignWidth="1000"
+             Background="#1B1F3A"
+             >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Willkommen zurück!"
+               Grid.Row="0"
+               Grid.ColumnSpan="2"
+               FontSize="24"
+               HorizontalAlignment="Center"
+               Style="{StaticResource StandardizedTextBlock}"/>
+        <StackPanel>
+            <TextBlock Text="Budgetübersicht"
+               Grid.Row="0"
+               Grid.Column="0"
+               FontSize="20"
+               Style="{StaticResource StandardizedTextBlock}"/>
+
+            <TextBlock Text="Ihr Momentanes Budget:"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   FontSize="16"
+                   Margin="0,20,0,0"
+                   Style="{StaticResource StandardizedTextBlock}"/>
+            <TextBlock x:Name="TxtCurrentBudget"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   FontSize="16"
+                   Style="{StaticResource StandardizedTextBlock}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -78,11 +78,12 @@
 
         <Grid Grid.Row="1">
             <Grid x:Name="OverviewPanel">
+                <controls:OverviewPanelBuild x:Name="BuildOverviewPanel"/>
             </Grid>
 
             <Grid x:Name="TransactionPanel"
                   Visibility="Collapsed">
-                <controls:TransactionPanelBuild x:Name="BuildPanelTransaction"/>
+                <controls:TransactionPanelBuild x:Name="BuildTransactionPanel"/>
             </Grid>
 
             <Grid x:Name="AddPanel"

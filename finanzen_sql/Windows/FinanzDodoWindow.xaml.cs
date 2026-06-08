@@ -1,4 +1,5 @@
 ﻿using finanzen_sql.utils;
+using finanzen_sql.Tables;
 using System.Data;
 using System.Windows;
 using MySqlConnector;
@@ -11,16 +12,16 @@ namespace finanzen_sql.Windows;
 public partial class FinanzDodoWindow : Window
 {
     private readonly DatabaseUtils _dbUtils;
-    private readonly int _userID;
-    public FinanzDodoWindow(DatabaseUtils databaseUtils, int userIDentification)
+    private readonly User _user;
+    public FinanzDodoWindow(DatabaseUtils databaseUtils, User userClass)
     {
         InitializeComponent();
         _dbUtils = databaseUtils;
-        _userID = userIDentification;
+        _user = userClass;
 
-        // set userID in the AddPanelBuild and TransactionPanelBuild
-        BuildAddPanel.userID = _userID;
-        BuildPanelTransaction.userID = _userID;
+        // set userID in the PanelBuilds
+        BuildAddPanel.user = _user;
+        BuildTransactionPanel.user = _user;
     }
     private void CloseClick(object sender, RoutedEventArgs e)
     {
@@ -52,7 +53,7 @@ public partial class FinanzDodoWindow : Window
         TransactionPanel.Visibility = Visibility.Visible;
         AddPanel.Visibility = Visibility.Collapsed;
 
-        BuildPanelTransaction.GetTransactions(sender, e);
+        BuildTransactionPanel.GetTransactions(sender, e);
     }
 
     private void AddClick(object sender, RoutedEventArgs e)
