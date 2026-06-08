@@ -2,22 +2,23 @@
 using System.Diagnostics.Eventing.Reader;
 using System.Windows;
 using MySqlConnector;
+using finanzen_sql.Tables;
 
 
 namespace finanzen_sql.Windows;
 
 public partial class RegistrationWindow : Window
 {
-    private readonly DatabaseUtils dbUtils;
+    private readonly DatabaseUtils _dbUtils;
     public RegistrationWindow(DatabaseUtils databaseUtils)
     {
         InitializeComponent();
-        dbUtils = databaseUtils;
+        _dbUtils = databaseUtils;
     }
 
     private void RouteToLoginClick(object sender, RoutedEventArgs e)
     {
-        LoginWindow login = new(dbUtils)
+        LoginWindow login = new(_dbUtils)
         {
             // fix window in the center
             WindowStartupLocation = WindowStartupLocation.CenterScreen
@@ -46,8 +47,39 @@ public partial class RegistrationWindow : Window
         }
 
         // using -> after execution dispose conncetion
-        using MySqlConnection conn = dbUtils.CreateConnection();
+        using MySqlConnection conn = _dbUtils.CreateConnection();
 
-        dbUtils.CreateUser(conn, username, password);
+        bool isRegistered = _dbUtils.CheckUser(conn, username);
+        if (isRegistered)
+        {
+            MessageBox.Show("Dieser Benutzername ist bereits vergeben");
+            return;
+        }
+
+        bool isCreated = _dbUtils.CreateUser(conn, username, password);
+        if (!isCreated) return;
+
+        MessageBox.Show("Du hast dich erfolgreich registriert");
+
+        User? user = _dbUtils.GetUserByName(conn, username);
+
+        if (user == null)
+        {
+            MessageBox.Show("Fehler beim Abrufen der Benutzerdaten");
+            return;
+        }
+
+        RouteToFinanzDodoClick(sender, e, user);
+    }
+
+    private void RouteToFinanzDodoClick(object sender, RoutedEventArgs e, User user)
+    {
+        FinanzDodoWindow finanzDodo = new(_dbUtils, user)
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen
+        };
+        finanzDodo.Show();
+
+        this.Close();
     }
 }

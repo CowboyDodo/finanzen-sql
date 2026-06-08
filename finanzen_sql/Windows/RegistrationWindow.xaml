@@ -5,42 +5,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Title="Finanzübersicht"
-        Height="400"
-        Width="800"
+        Height="500"
+        Width="1000"
         Background="#181735"
         WindowStyle="None"
         ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="500"/>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
         <Border Grid.Row="1" Background="#25253B"/>
 
-        <controls:TopBar Grid.Row="0"
-                         Grid.ColumnSpan="2"/>
+        <controls:TopBarBuild Grid.Row="0"
+                              Grid.ColumnSpan="2"/>
 
         <StackPanel Grid.Row="1"
                     Grid.Column="0"
                     VerticalAlignment="Center"
-                    Margin="40,0,40,0" Height="123">
+                    Margin="40,0,40,0">
             <StackPanel>
+                
                 <StackPanel Margin="0,0,0,20">
+                    
                     <TextBlock Text="Logge dich ein"
                                HorizontalAlignment="Center"
                                Foreground="LightGray"
-                               FontSize="20"
+                               FontSize="25"
                                FontWeight="Bold"
                                />
                 </StackPanel>
                 <StackPanel Margin="0,0,0,20">
                     <TextBlock Text="Hast du schon einen Account? Melde dich an und sorge für eine gute Zukunft!"
+                               FontSize="14"
                                TextAlignment="Center"
                                TextWrapping="Wrap"
                                Foreground="LightGray"
@@ -65,7 +68,7 @@
                 <TextBlock Text="Registrieren"
                            Foreground="LightGray"
                            HorizontalAlignment="Center"
-                           FontSize="20"
+                           FontSize="25"
                            FontWeight="Bold"
                            Margin="0,0,0,15"
                            />
@@ -73,20 +76,23 @@
                 <TextBox x:Name="UsernameTBox"
                          Style="{StaticResource LoginTextBox}"/>
                 <TextBlock Text="username"
+                           FontSize="14"
                            Foreground="LightGray"
-                           Margin="85,0,60,0"/>
+                           Margin="135,0,60,0"/>
 
                 <PasswordBox x:Name="PasswordBox"
                              Style="{StaticResource PasswordBox}"/>
                 <TextBlock Text="password"
+                           FontSize="14"
                            Foreground="LightGray"
-                           Margin="85,0,60,0"/>
+                           Margin="135,0,60,0"/>
 
                 <PasswordBox x:Name="Password2Box"
                              Style="{StaticResource PasswordBox}"/>
                 <TextBlock Text="repeat password"
+                           FontSize="14"
                            Foreground="LightGray"
-                           Margin="85,0,60,0"/>
+                           Margin="135,0,60,0"/>
 
                 <Button Content="Registrieren"
                         Margin="0,15,0,0"

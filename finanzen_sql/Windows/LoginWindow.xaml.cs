@@ -2,21 +2,22 @@
 using System.Windows;
 using System.Windows.Controls;
 using MySqlConnector;
+using finanzen_sql.Tables;
 
 
 namespace finanzen_sql.Windows;
 public partial class LoginWindow : Window
 {
-    private readonly DatabaseUtils dbUtils;
+    private readonly DatabaseUtils _dbUtils;
     public LoginWindow(DatabaseUtils databaseUtils)
     {
         InitializeComponent();
-        dbUtils = databaseUtils;
+        _dbUtils = databaseUtils;
     }
 
     private void RouteToRegistrationClick(object sender, RoutedEventArgs e)
     {
-        RegistrationWindow registration = new(dbUtils)
+        RegistrationWindow registration = new(_dbUtils)
         {
             // set window in the center
             WindowStartupLocation = WindowStartupLocation.CenterScreen
@@ -37,17 +38,38 @@ public partial class LoginWindow : Window
             return;
         }
 
-        using MySqlConnection conn = dbUtils.CreateConnection();
+        using MySqlConnection conn = _dbUtils.CreateConnection();
 
-        bool result = dbUtils.LoginUser(conn, username, password);
+        // checks if the username and password are correct
+        bool isCorrect = _dbUtils.LoginUser(conn, username, password);
 
-        if (result == false)
+        if (isCorrect == false)
         {
             MessageBox.Show("Das Passwort oder der Username ist falsch");
             return;
         }
 
         MessageBox.Show("Du hast dich erfolgreich eingeloggt");
-        return;
+
+        User? user = _dbUtils.GetUserByName(conn, username);
+        
+        if (user == null)
+        {
+            MessageBox.Show("Fehler beim Abrufen der Benutzerdaten");
+            return;
+        }
+
+        RouteToFinanzDodoClick(sender, e, user);
+    }
+
+    private void RouteToFinanzDodoClick(object sender, RoutedEventArgs e, User user)
+    {
+        FinanzDodoWindow finanzDodo = new(_dbUtils, user)
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen
+        };
+        finanzDodo.Show();
+
+        this.Close();
     }
 }

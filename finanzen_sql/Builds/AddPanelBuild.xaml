@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="finanzen_sql.Builds.AddPanelBuild"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid>
+        <Border Width="500"
+                Padding="25"
+                CornerRadius="15"
+                Background="#1B1F3A"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="15">
+
+            <StackPanel VerticalAlignment="Center">
+                <Grid>
+                    <TextBlock Grid.Column="0"
+                           Text="Neue Transaktion"
+                           Foreground="White"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                    <Button Content="X"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource CloseButtonStyle}"/>
+                </Grid>
+
+                <TextBlock Text="Betrag"
+                           Foreground="#B8BFD8"/>
+                <TextBox x:Name="TxtAmount"
+                         Style="{StaticResource AddTextBox}"/>
+
+                <TextBlock Text="Beschreibung"
+                           Foreground="#B8BFD8"/>
+                <TextBox x:Name="TxtDescription"
+                         Style="{StaticResource AddTextBox}"/>
+
+                <TextBlock Text="Kategorie"
+                           Foreground="#B8BFD8"/>
+                <ComboBox x:Name="CmbCategory"
+                          Height="25"
+                          Margin="0,5,0,10"
+                          DropDownOpened="ShowCategoryNames"/>
+
+                <TextBlock Text="Datum"
+                           Foreground="#B8BFD8"/>
+                <DatePicker x:Name="DpDate"
+                            Height="25"
+                            Margin="0,5,0,10"/>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,5,0,10">
+
+                    <CheckBox x:Name="CbIsIncome"
+                              Content="Einnahme"
+                              Foreground="White"
+                              Margin="0,0,20,0"/>
+
+                    <CheckBox x:Name="CbIsRecurring"
+                              Content="Dauerauftrag"
+                              Foreground="White"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="Speichern"
+                        HorizontalAlignment="Center"
+                        Click="SendNewEntry"
+                        Margin="0,10,0,0"
+                        Style="{StaticResource LoginButtonStyle}"/>
+
+            </StackPanel>
+
+        </Border>
+    </Grid>
+
+</UserControl>
