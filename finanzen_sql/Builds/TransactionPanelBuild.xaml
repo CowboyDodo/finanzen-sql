@@ -112,7 +112,27 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         
-                        <DataGridTextColumn Header="Betrag" Binding="{Binding Amount}"/>
+                        <!--Coloring the amount column-->
+                        <DataGridTemplateColumn Header="Betrag">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Amount}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="ForestGreen"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CategoryType}" Value="Ausgabe">
+                                                        <Setter Property="Foreground" Value="Red"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                         <DataGridTextColumn Header="Notiz" Binding="{Binding Description}"/>
                         <DataGridTextColumn Header="Kategorie" Binding="{Binding CategoryName}"/>
                         <DataGridTextColumn Header="Datum" Binding="{Binding Date, StringFormat=dd.MM.yyyy}"/>

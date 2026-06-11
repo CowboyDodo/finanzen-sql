@@ -73,6 +73,8 @@ public class DatabaseUtils
         ExecuteCreateQueries(dbTables.CreateTableUser(), connection);
         ExecuteCreateQueries(dbTables.CreateTableCategory(), connection);
         ExecuteCreateQueries(dbTables.CreateTableTransaction(), connection);
+
+        ExecuteCreateQueries(dbTables.CreateCategories(), connection);
     }
 
     /// <summary>

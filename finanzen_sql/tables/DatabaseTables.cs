@@ -10,7 +10,7 @@ public class DatabaseTables
         return @"
             CREATE TABLE IF NOT EXISTS Kategorie (
                 id INT NOT NULL AUTO_INCREMENT,
-                name VARCHAR(64) NOT NULL,
+                name VARCHAR(64) NOT NULL UNIQUE,
                 typ ENUM('Einnahme', 'Ausgabe'),
                 PRIMARY KEY (id)
             );
@@ -49,6 +49,26 @@ public class DatabaseTables
                 budget DECIMAL DEFAULT 0,
                 PRIMARY KEY (id)
             );
+        ";
+    }
+
+    public string CreateCategories()
+    {
+        return @"
+            INSERT IGNORE INTO kategorie (name, typ)
+            VALUES
+                ('Transport', 'Ausgabe'),
+                ('Freizeit', 'Ausgabe'),
+                ('Miete', 'Ausgabe'),
+                ('Versicherungen', 'Ausgabe'),
+                ('Lebensmittel', 'Ausgabe'),
+                ('Sonstiges (Ausgabe)', 'Ausgabe'),
+                ('Gehalt', 'Einnahme'),
+                ('Freelancing', 'Einnahme'),
+                ('Investitionen', 'Einnahme'),
+                ('Zinsen', 'Einnahme'),
+                ('Verkauf', 'Einnahme'),
+                ('Sonstiges (Einnahme)', 'Einnahme');
         ";
     }
 }
