@@ -89,13 +89,12 @@
                           ColumnHeaderStyle="{StaticResource DataGridTransactionColumnHeaderStyle}"
                           RowStyle="{StaticResource DataGridTransactionRowStyle}">
                     
-                    <!--Table definitons-->
+                    <!--Table definiton-->
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Aktionen">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-
                                         <Button Content="Edit"
                                                 Margin="0,0,5,0"
                                                 Background="#3A4A7A"
@@ -112,6 +111,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        
                         <DataGridTextColumn Header="Betrag" Binding="{Binding Amount}"/>
                         <DataGridTextColumn Header="Notiz" Binding="{Binding Description}"/>
                         <DataGridTextColumn Header="Kategorie" Binding="{Binding CategoryName}"/>

@@ -49,16 +49,16 @@ public partial class EditTransactionWindow : Window
 
         bool isIncome = CbIsIncome.IsChecked == true;
 
-        if (isIncome && amount < 0)
+        if (TxtDescription.Text.Length > 32)
         {
-            MessageBox.Show("Der Betrag muss positiv sein, wenn es sich um eine Einnahme handelt.");
+            MessageBox.Show("Die Notiz überschreitet die max Länge von 32 Zeichen");
             return;
         }
-        if (isIncome == false && amount > 0)
-        {
-            MessageBox.Show("Der Betrag muss negativ sein, wenn es sich um eine Ausgabe handelt.");
-            return;
-        }
+
+        if (!isIncome)
+            amount = -Math.Abs(amount);
+        else
+            amount = Math.Abs(amount);
 
         Transaction editedTransaction = new()
         {
@@ -104,5 +104,10 @@ public partial class EditTransactionWindow : Window
     {
         using MySqlConnection conn = _dbUtils.CreateConnection();
         _allCategories = _dbUtils.GetCategories(conn);
+    }
+
+    private void ClearCategory(object sender, RoutedEventArgs e)
+    {
+        CmbCategory.SelectedIndex = -1;
     }
 }

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using MySqlConnector;
 using finanzen_sql.Tables;
+using System.Windows.Input;
 
 
 namespace finanzen_sql.Windows;
@@ -71,5 +72,11 @@ public partial class LoginWindow : Window
         finanzDodo.Show();
 
         this.Close();
+    }
+
+    private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+            UserLogin(sender, e);
     }
 }

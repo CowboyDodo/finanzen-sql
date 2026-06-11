@@ -22,8 +22,8 @@ public class DatabaseTables
         return @"
             CREATE TABLE IF NOT EXISTS Transaktion (
                 id INT NOT NULL AUTO_INCREMENT,
-                betrag DECIMAL NOT NULL,
-                beschreibung VARCHAR(255),
+                betrag DECIMAL(10,2) NOT NULL,
+                beschreibung VARCHAR(32),
                 istWiederkehrend BOOLEAN DEFAULT false,
                 user_id INT NOT NULL,
                 kategorie_id INT,

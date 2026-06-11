@@ -5,8 +5,10 @@ using MySqlConnector;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Printing;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace finanzen_sql.utils;
@@ -118,7 +120,7 @@ public class DatabaseUtils
         // removing whitespaces
         username = username.Trim();
 
-        string query = "INSERT INTO User (username, passwort) VALUES (@username,@password)";
+        string query = "INSERT INTO User (username, passwort) VALUES (@username, @password)";
         // 13 means a workfactor of 13 -> number of iterations to calculate the hash; the higher the better but also slower
         string hashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(password, 13);
 
@@ -165,6 +167,69 @@ public class DatabaseUtils
     }
 
     /// <summary>
+    /// Helps to get the user id of a user based on the username,
+    /// which is needed for the login/registration process
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    public User? GetUserByName(MySqlConnection connection, string username)
+    {
+        string query = "SELECT * FROM user WHERE username = @username";
+
+        using MySqlCommand cmd = new(query, connection);
+        cmd.Parameters.AddWithValue("@username", username.Trim());
+
+        using MySqlDataReader reader = cmd.ExecuteReader();
+
+        if (!reader.Read()) return null;
+
+        return new User
+        {
+            Id = reader.GetInt32("id"),
+            Username = reader.GetString("username"),
+            Password = reader.GetString("passwort"),
+            Budget = reader.GetDecimal("budget")
+        };
+    }
+
+    public decimal GetMonthlyUserExpenses(MySqlConnection connection, User user, DateTime start, DateTime end)
+    {
+        string query = @"
+            SELECT COALESCE(SUM(betrag), 0) FROM transaktion
+            WHERE user_id = @userID
+            AND datum >= @start
+            AND datum < @end
+            AND betrag < 0
+        ";
+
+        using MySqlCommand cmd = new(query, connection);
+        cmd.Parameters.AddWithValue("@userID", user.Id);
+        cmd.Parameters.AddWithValue("@start", start);
+        cmd.Parameters.AddWithValue("@end", end);
+
+        try
+        {
+            return Convert.ToDecimal(cmd.ExecuteScalar());
+        }
+        catch (Exception error)
+        {
+            throw new Exception("Failed to get the Sum of the transactions", error);
+        }
+    }
+
+    public void PushUser(MySqlConnection connection, User user)
+    {
+        string query = "UPDATE user SET budget = @budget WHERE id = @userID";
+
+        using MySqlCommand cmd = new(query, connection);
+        cmd.Parameters.AddWithValue("@budget", user.Budget);
+        cmd.Parameters.AddWithValue("@userID", user.Id);
+
+        cmd.ExecuteNonQuery();
+    }
+
+    /// <summary>
     /// Gets all transactions of a user and returns them as a DataTable to be displayed in the frontend
     /// </summary>
     /// <param name="connection"></param>
@@ -180,8 +245,6 @@ public class DatabaseUtils
         string isRecurring = ""
     )
     {
-        // LEFT JOIIN is used to also get transactions without a category, which would be lost with an INNER JOIN -> null value doesnt exists in boht tables
-        // COALESCE is used to display "Keine Angabe" and "-" instead of empty values for those transactions
         StringBuilder query = new(@"
             SELECT
                 t.id AS TransactionID,
@@ -191,8 +254,8 @@ public class DatabaseUtils
                 t.istWiederkehrend AS Recurring,
                 t.user_id AS UserID,
                 t.kategorie_id AS CategoryID,
-                COALESCE(k.name, 'Keine Angabe') AS CategoryName,
-                COALESCE(k.typ, '-') AS CategoryType
+                k.name AS CategoryName,
+                k.typ AS CategoryType
             FROM transaktion t
             LEFT JOIN kategorie k
                 ON t.kategorie_id = k.id
@@ -200,12 +263,15 @@ public class DatabaseUtils
         ");
         
         // add filter to string if variables not null
-        if (categoryId != null) query.Append("AND k.id = @categoryId ");
-        if (type != "") query.Append("AND k.typ = @type ");
-        if (isRecurring != "") query.Append("AND t.istWiederkehrend = @isRecurring");
+        if (categoryId != null)
+            query.Append(" AND k.id = @categoryId ");
+        if (type != "")
+            query.Append(" AND k.typ = @type ");
+        if (isRecurring != "")
+            query.Append(" AND t.istWiederkehrend = @isRecurring ");
 
         query.Append(@"
-            ORDER BY t.id DESC
+            ORDER BY t.datum DESC
             LIMIT @pageSize OFFSET @offset
         ");
 
@@ -242,98 +308,50 @@ public class DatabaseUtils
         return allTransactions;
     }
 
-    /// <summary>
-    /// Get the total count of transactions for a user, which is needed to calculate the number of pages for the pagination in the frontend
-    /// </summary>
-    /// <param name="connection"></param>
-    /// <param name="userId">Id of the current user</param>
-    /// <param name="categoryId">Id of the category</param>
-    /// <param name="type">"Einahme" or "Ausgabe"</param>
-    /// <param name="isRecurring">"ja" oder "nein"</param>
-    /// <returns></returns>
-    public int GetTransactionCount(
+    public List<TransactionCategorySum> GetTransactionSumByCategory(
         MySqlConnection connection,
-        int userId,
-        int? categoryId = null,
-        string type = "",
-        string isRecurring = ""
+        int userID,
+        DateTime? start = null,
+        DateTime? end = null
     )
     {
         StringBuilder query = new(@"
-            SELECT COUNT(*)
-            FROM transaktion t
-            LEFT JOIN kategorie k ON t.kategorie_id = k.id
-            WHERE t.user_id = @userId
+            SELECT 
+                SUM(t.betrag) AS Amount,
+                k.name AS CategoryName,
+                k.typ AS CategoryType
+            FROM transaktion as t
+            INNER JOIN kategorie as k
+                ON t.kategorie_id = k.id
+            WHERE t.user_id = @userID
         ");
 
-        // add filter to string if variables not null
-        if (categoryId != null) query.Append("AND t.kategorie_id = @categoryId ");
-        if (type != "") query.Append("AND k.typ = @type ");
-        if (isRecurring != "") query.Append("AND t.istWiederkehrend = @isRecurring");
+        if (start != null)
+            query.Append(" AND t.datum >= @start AND t.datum < @end ");
+
+        query.Append(" GROUP BY t.kategorie_id ");
 
         using MySqlCommand cmd = new(query.ToString(), connection);
-        cmd.Parameters.AddWithValue("@userId", userId);
+        cmd.Parameters.AddWithValue("@userID", userID);
 
-        if (categoryId != null) cmd.Parameters.AddWithValue("@categoryId", categoryId);
-        if (type != "") cmd.Parameters.AddWithValue("@type", type);
-        if (isRecurring == "ja") cmd.Parameters.AddWithValue("@isRecurring", true);
-        if (isRecurring == "nein") cmd.Parameters.AddWithValue("@isRecurring", false);
-
-        return Convert.ToInt32(cmd.ExecuteScalar());
-    }
-
-    /// <summary>
-    /// Helps to get the user id of a user based on the username,
-    /// which is needed for the login/registration process
-    /// </summary>
-    /// <param name="connection"></param>
-    /// <param name="username"></param>
-    /// <returns></returns>
-    public User? GetUserByName(MySqlConnection connection, string username)
-    {
-        string query = "SELECT * FROM user WHERE username = @username";
-
-        using MySqlCommand cmd = new(query, connection);
-        cmd.Parameters.AddWithValue("@username", username.Trim());
+        if (start != null)
+            cmd.Parameters.AddWithValue("@start", start);
+            cmd.Parameters.AddWithValue("@end", end);
 
         using MySqlDataReader reader = cmd.ExecuteReader();
 
-        if (!reader.Read()) return null;
-
-        return new User { 
-            Id = reader.GetInt32("id"),
-            Username = reader.GetString("username"),
-            Password = reader.GetString("passwort"),
-            Budget = reader.GetDecimal("budget")
-        };
-    }
-
-    /// <summary>
-    /// Gets all categories from the database and returns them as a list of Category objects
-    /// to be displayed in the frontend when creating a new transaction
-    /// </summary>
-    /// <param name="connection">Open MySQL database connection.</param>
-    /// <returns></returns>
-    public List<Category> GetCategories(MySqlConnection connection)
-    {
-        string query = "SELECT id, name, typ FROM kategorie";
-
-        using MySqlCommand cmd = new(query, connection);
-        using MySqlDataReader result = cmd.ExecuteReader();
-
-        List<Category> categories = new();
-
-        while (result.Read())
+        List<TransactionCategorySum> allTransactions = new();
+        while (reader.Read())
         {
-            categories.Add(new Category
+            allTransactions.Add(new TransactionCategorySum
             {
-                Id = result.GetInt32("id"),
-                Name = result.GetString("name"),
-                Type = result.GetString("typ")
+                SumAmount = reader.GetDecimal("Amount"),
+                Name = reader.GetString("CategoryName"),
+                Type = reader.GetString("CategoryType"),
             });
         }
 
-        return categories;
+        return allTransactions;
     }
 
     /// <summary>
@@ -403,7 +421,8 @@ public class DatabaseUtils
         string query = @"
             UPDATE transaktion 
             SET betrag = @amount, beschreibung = @description, istWiederkehrend = @isRecurring, kategorie_id = @categoryID, datum = @date
-            WHERE id = @transactionID AND user_id = @userID";
+            WHERE id = @transactionID AND user_id = @userID
+        ";
 
         using MySqlCommand cmd = new(query, connection);
         cmd.Parameters.AddWithValue("@transactionID", transaction.Id);
@@ -425,6 +444,115 @@ public class DatabaseUtils
             MessageBox.Show("Bitte überprüfe all deine Eingaben");
             return false;
         }
+    }
+
+    /// <summary>
+    /// Get the total count of transactions for a user, which is needed to calculate the number of pages for the pagination in the frontend
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="userId">Id of the current user</param>
+    /// <param name="categoryId">Id of the category</param>
+    /// <param name="type">"Einahme" or "Ausgabe"</param>
+    /// <param name="isRecurring">"ja" oder "nein"</param>
+    /// <returns></returns>
+    public int GetTransactionCount(
+        MySqlConnection connection,
+        int userId,
+        int? categoryId = null,
+        string type = "",
+        string isRecurring = ""
+    )
+    {
+        StringBuilder query = new(@"
+            SELECT COUNT(*)
+            FROM transaktion t
+            LEFT JOIN kategorie k ON t.kategorie_id = k.id
+            WHERE t.user_id = @userId
+        ");
+
+        // add filter to string if variables not null
+        if (categoryId != null) query.Append(" AND t.kategorie_id = @categoryId ");
+        if (type != "") query.Append(" AND k.typ = @type ");
+        if (isRecurring != "") query.Append(" AND t.istWiederkehrend = @isRecurring ");
+
+        using MySqlCommand cmd = new(query.ToString(), connection);
+        cmd.Parameters.AddWithValue("@userId", userId);
+
+        if (categoryId != null) cmd.Parameters.AddWithValue("@categoryId", categoryId);
+        if (type != "") cmd.Parameters.AddWithValue("@type", type);
+        if (isRecurring == "ja") cmd.Parameters.AddWithValue("@isRecurring", true);
+        if (isRecurring == "nein") cmd.Parameters.AddWithValue("@isRecurring", false);
+
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    public decimal GetSumAmountTransactions(MySqlConnection connection, int userID)
+    {
+        string query = "SELECT COALESCE(SUM(betrag), 0) FROM transaktion WHERE user_id = @userID";
+
+        using MySqlCommand cmd = new(query, connection);
+        cmd.Parameters.AddWithValue("@userID", userID);
+
+        return Convert.ToDecimal(cmd.ExecuteScalar());
+
+    }
+
+    /// <summary>
+    /// Gets all categories from the database and returns them as a list of Category objects
+    /// to be displayed in the frontend when creating a new transaction
+    /// </summary>
+    /// <param name="connection">Open MySQL database connection.</param>
+    /// <returns></returns>
+    public List<Category> GetCategories(MySqlConnection connection, string type = "")
+    {
+        StringBuilder query = new(@"
+            SELECT id, name, typ FROM kategorie
+        ");
+
+        if (type != "")
+            query.Append(" WHERE typ = @type");
+
+        using MySqlCommand cmd = new(query.ToString(), connection);
+
+        if (type != "")
+            cmd.Parameters.AddWithValue("@type", type);
+
+        using MySqlDataReader result = cmd.ExecuteReader();
+
+        List<Category> categories = new();
+
+        while (result.Read())
+        {
+            categories.Add(new Category
+            {
+                Id = result.GetInt32("id"),
+                Name = result.GetString("name"),
+                Type = result.GetString("typ")
+            });
+        }
+
+        return categories;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="name">Name of the wanted category</param>
+    /// <param name="type">Type of the wanted category</param>
+    /// <returns>id of the wanted category</returns>
+    public int GetDefaultTypeIDCategory(MySqlConnection connection, string type)
+    {
+        string query;
+        if (type == "Einnahme")
+            query = "SELECT id FROM kategorie WHERE name = 'Sonstiges (Einnahme)' AND typ = @type";
+        else
+            query = "SELECT id FROM kategorie WHERE name = 'Sonstiges (Ausgabe)' AND typ = @type";
+
+        using MySqlCommand cmd = new(query, connection);
+        cmd.Parameters.AddWithValue("type", type);
+
+        return Convert.ToInt32(cmd.ExecuteScalar());
     }
 }
 

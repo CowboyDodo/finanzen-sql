@@ -82,7 +82,8 @@
                            Margin="135,0,60,0"/>
 
                 <PasswordBox x:Name="PasswordBox"
-                             Style="{StaticResource PasswordBox}"/>
+                             Style="{StaticResource PasswordBox}"
+                             KeyDown="PasswordBox_KeyDown"/>
                 <TextBlock Text="password"
                            FontSize="14"
                            Foreground="LightGray"

@@ -46,6 +46,13 @@ public partial class TransactionPanelBuild : UserControl
             filters.IsRecurring
         );
 
+        foreach (Transaction transaction in allTransactions)
+        {
+            transaction.CategoryName = transaction.CategoryName
+                .Replace(" (Ausgabe)", "")
+                .Replace(" (Einnahme)", "");
+        }
+
         DataGridTransaction.ItemsSource = allTransactions;
     }
 
@@ -96,7 +103,13 @@ public partial class TransactionPanelBuild : UserControl
 
         using MySqlConnection conn = _dbutils.CreateConnection();
 
-        int totalRows = _dbutils.GetTransactionCount(conn, user!.Id, filters.CategoryId, filters.TypeFilter, filters.IsRecurring);
+        int totalRows = _dbutils.GetTransactionCount(
+            conn,
+            user!.Id,
+            filters.CategoryId,
+            filters.TypeFilter,
+            filters.IsRecurring
+        );
         int totalPages = (int)Math.Ceiling((double)totalRows / _pageSize);
 
         return totalPages;
@@ -123,9 +136,14 @@ public partial class TransactionPanelBuild : UserControl
     // filter DropDwonOpened references
     private void CategoryFilter_DropDownOpened(object sender, EventArgs e)
     {
+        // only show categories binded to the chosen type
+        string type = "";
+        if (CmbTypeFilter.Text == "Einnahme" || CmbTypeFilter.Text == "Ausgabe")
+            type = CmbTypeFilter.Text;
+
         using MySqlConnection conn = _dbutils.CreateConnection();
 
-        List<Category> allCategories = _dbutils.GetCategories(conn);
+        List<Category> allCategories = _dbutils.GetCategories(conn, type);
 
         CmbCategoryFilter.ItemsSource = allCategories;
         CmbCategoryFilter.DisplayMemberPath = "Name";

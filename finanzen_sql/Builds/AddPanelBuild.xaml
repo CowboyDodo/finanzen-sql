@@ -20,10 +20,6 @@
                            FontWeight="Bold"
                            VerticalAlignment="Center"
                            Margin="0,0,0,10"/>
-
-                    <Button Content="X"
-                        HorizontalAlignment="Right"
-                        Style="{StaticResource CloseButtonStyle}"/>
                 </Grid>
 
                 <TextBlock Text="Betrag"
@@ -55,7 +51,8 @@
                     <CheckBox x:Name="CbIsIncome"
                               Content="Einnahme"
                               Foreground="White"
-                              Margin="0,0,20,0"/>
+                              Margin="0,0,20,0"
+                              Click="ClearCategory"/>
 
                     <CheckBox x:Name="CbIsRecurring"
                               Content="Dauerauftrag"
