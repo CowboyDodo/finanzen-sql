@@ -195,6 +195,17 @@ public class DatabaseUtils
         };
     }
 
+    /// <summary>
+    /// Gets the total expenses of a user within the specified date range.
+    /// </summary>
+    /// <param name="connection">The database connection.</param>
+    /// <param name="user">The user whose expenses should be calculated.</param>
+    /// <param name="start">The start date of the period.</param>
+    /// <param name="end">The end date of the period.</param>
+    /// <returns>The total amount of expenses for the specified period.</returns>
+    /// <exception cref="Exception">
+    /// Thrown when an error occurs while retrieving the expenses.
+    /// </exception>
     public decimal GetMonthlyUserExpenses(MySqlConnection connection, User user, DateTime start, DateTime end)
     {
         string query = @"
@@ -220,6 +231,11 @@ public class DatabaseUtils
         }
     }
 
+    /// <summary>
+    /// Pushes User to the database
+    /// </summary>
+    /// <param name="connection">The database connection.</param>
+    /// <param name="user">The user whose budet should be updated.</param>
     public void PushUser(MySqlConnection connection, User user)
     {
         string query = "UPDATE user SET budget = @budget WHERE id = @userID";
@@ -234,9 +250,21 @@ public class DatabaseUtils
     /// <summary>
     /// Gets all transactions of a user and returns them as a DataTable to be displayed in the frontend
     /// </summary>
-    /// <param name="connection"></param>
-    /// <param name="user_id"></param>
-    /// <returns>Table</returns>
+    /// <param name="connection">The database connection.</param>
+    /// <param name="userId">The ID of the user whose transactions should be retrieved.</param>
+    /// <param name="pageSize">The maximum number of transactions to return.</param>
+    /// <param name="offset">The number of transactions to skip for pagination.</param>
+    /// <param name="categoryId">Optional category ID used to filter transactions.</param>
+    /// <param name="type">
+    /// Optional transaction type filter (e.g. "Income" or "Expense").
+    /// </param>
+    /// <param name="isRecurring">
+    /// Optional recurring transaction filter.
+    /// Expected values are "true", "false", or an empty string for no filter.
+    /// </param>
+    /// <returns>
+    /// A list of transactions matching the specified filters and pagination settings.
+    /// </returns>
     public List<Transaction> GetTransactions(
         MySqlConnection connection,
         int userId,
@@ -310,6 +338,21 @@ public class DatabaseUtils
         return allTransactions;
     }
 
+    /// <summary>
+    /// Retrieves the total transaction amount grouped by category for a specific user
+    /// within the specified date range.
+    /// </summary>
+    /// <param name="connection">The database connection.</param>
+    /// <param name="userID">The ID of the user whose transactions should be analyzed.</param>
+    /// <param name="start">
+    /// Optional start date of the period. If null, no lower date limit is applied.
+    /// </param>
+    /// <param name="end">
+    /// Optional end date of the period. If null, no upper date limit is applied.
+    /// </param>
+    /// <returns>
+    /// A list containing the total transaction amount for each category.
+    /// </returns>
     public List<TransactionCategorySum> GetTransactionSumByCategory(
         MySqlConnection connection,
         int userID,

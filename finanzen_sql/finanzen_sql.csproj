@@ -22,9 +22,9 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
-    <PackageReference Include="GitHub.Copilot.SDK" Version="0.3.0" />
+    <PackageReference Include="GitHub.Copilot.SDK" Version="1.0.1" />
     <PackageReference Include="MySql.Data" Version="9.7.0" />
-    <PackageReference Include="MySqlConnector" Version="2.5.0" />
+    <PackageReference Include="MySqlConnector" Version="2.6.0" />
     <PackageReference Include="Nerdbank.MessagePack" Version="1.2.4" />
   </ItemGroup>
 
