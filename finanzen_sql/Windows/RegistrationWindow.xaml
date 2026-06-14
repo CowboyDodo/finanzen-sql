@@ -88,7 +88,8 @@
                            Margin="135,0,60,0"/>
 
                 <PasswordBox x:Name="Password2Box"
-                             Style="{StaticResource PasswordBox}"/>
+                             Style="{StaticResource PasswordBox}"
+                             KeyDown="PasswordBox_KeyDown"/>
                 <TextBlock Text="repeat password"
                            FontSize="14"
                            Foreground="LightGray"

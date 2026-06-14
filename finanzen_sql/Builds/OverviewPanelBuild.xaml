@@ -6,9 +6,7 @@
              xmlns:local="clr-namespace:finanzen_sql.Builds"
              mc:Ignorable="d" 
              d:DesignHeight="500"
-             d:DesignWidth="1000"
-             Background="#1B1F3A"
-             >
+             d:DesignWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -20,29 +18,377 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Willkommen zurück!"
-               Grid.Row="0"
-               Grid.ColumnSpan="2"
-               FontSize="24"
-               HorizontalAlignment="Center"
-               Style="{StaticResource StandardizedTextBlock}"/>
-        <StackPanel>
-            <TextBlock Text="Budgetübersicht"
-               Grid.Row="0"
-               Grid.Column="0"
-               FontSize="20"
-               Style="{StaticResource StandardizedTextBlock}"/>
+                   Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   Style="{StaticResource StandardizedTextBlock}"/>
+        
+        <!--Budget Overview upper left corner-->
+        <Border Grid.Row="0"
+                Grid.Column="0"
+                Padding="25"
+                CornerRadius="15"
+                Background="#CC1E2340"
+                Margin="26">
+            
+            <StackPanel>
+                <TextBlock Text="Budgetübersicht"
+                           FontSize="20"
+                           Margin="0,0,0,20"
+                           Style="{StaticResource StandardizedTextBlock}"/>
 
-            <TextBlock Text="Ihr Momentanes Budget:"
-                   Grid.Row="0"
-                   Grid.Column="0"
-                   FontSize="16"
-                   Margin="0,20,0,0"
-                   Style="{StaticResource StandardizedTextBlock}"/>
-            <TextBlock x:Name="TxtCurrentBudget"
-                   Grid.Row="0"
-                   Grid.Column="0"
-                   FontSize="16"
-                   Style="{StaticResource StandardizedTextBlock}"/>
-        </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+
+                    <TextBlock Text="Monatliches Budget"  
+                               Grid.Column="0"
+                               FontSize="16"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtCurrentBudget"
+                               Text="unbegrenzt"
+                               Grid.Column="0"
+                               FontSize="15"
+                               Margin="0,20,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Verfügbares Budget"
+                               Grid.Column="1"
+                               FontSize="15"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtAvailableBudget"
+                               Text="unbegrenzt"
+                               Grid.Column="1"
+                               FontSize="15"
+                               Margin="0,20,0,0"
+                               Foreground="ForestGreen"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                </Grid>
+
+
+                <TextBlock Text="Neues Budget festlegen"
+                           FontSize="16"
+                           Margin="0,10,0,0"
+                           Style="{StaticResource StandardizedTextBlock}"/>
+                <TextBox x:Name="TbBudget"
+                         HorizontalAlignment="Left"
+                         Height="20"
+                         FontSize="14"
+                         Width="100"
+                         Margin="0,2,0,0"
+                         KeyDown="TbBudget_KeyDown"/>
+            </StackPanel>
+        </Border>
+
+        <!--Acoount Balance upper right corner-->
+        <Border Grid.Row="0"
+                Grid.Column="1"
+                Padding="25"
+                CornerRadius="15"
+                Background="#1B1F3A"
+                Margin="26">
+            <StackPanel>
+                <TextBlock Text="Kontostand"
+                           FontSize="20"
+                           Style="{StaticResource StandardizedTextBlock}"/>
+                
+                <TextBlock Text="Ihr momentaner Kontostand"
+                           FontSize="16"
+                           Margin="0,20,0,0"
+                           Style="{StaticResource StandardizedTextBlock}"/>
+                <TextBlock x:Name="TxtCurrentBalance"
+                           FontSize="16"
+                           Style="{StaticResource StandardizedTextBlock}"/>
+            </StackPanel>
+        </Border>
+
+        <!--Expense Overview bottom left corner-->
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Padding="10"
+                CornerRadius="15"
+                Background="#1B1F3A"
+                Margin="26,0,26,26">
+
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Text="Ausgaben"
+                               Grid.Column="0"
+                               FontSize="20"
+                               Margin="0,0,0,20"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <DatePicker x:Name="DpExpense"
+                                Grid.Column="1"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Right"
+                                Margin="10,0,0,0"
+                                CalendarClosed="ShowExpenses"/>
+                    <ComboBox x:Name="CbExpenseInterval"
+                              Grid.Column="2"
+                              SelectedIndex="4"
+                              VerticalAlignment="Top"
+                              Height="21"
+                              VerticalContentAlignment="Center"
+                              Margin="10,2,0,0"
+                              DropDownClosed="ShowExpenses"
+                              Style="{StaticResource ComboBoxFilter}">
+                        <ComboBoxItem>Tag</ComboBoxItem>
+                        <ComboBoxItem>Woche</ComboBoxItem>
+                        <ComboBoxItem>Monat</ComboBoxItem>
+                        <ComboBoxItem>Jahr</ComboBoxItem>
+                        <ComboBoxItem>Insgesamt</ComboBoxItem>
+                    </ComboBox>
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Transport"  
+                               Grid.Column="0"
+                               FontSize="16"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtExpenseTransport"
+                               Text="-"
+                               Grid.Column="0"
+                               FontSize="15"
+                               Margin="0,20,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Miete"
+                               Grid.Column="1"
+                               FontSize="15"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtExpenseRent"
+                               Text="-"
+                               Grid.Column="1"
+                               FontSize="15"
+                               Margin="0,20,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Freizeit"  
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               FontSize="16"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtExpenseFreetime"
+                               Text="-"
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Lebensmittel"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               FontSize="15"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtExpenseGroceries"
+                               Text="-"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Versicherung"  
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               FontSize="16"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtExpenseInsurance"
+                               Text="-"
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Sonstiges"
+                               Grid.Column="1"
+                               Grid.Row="2"
+                               FontSize="15"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtExpenseOthers"
+                               Text="-"
+                               Grid.Column="1"
+                               Grid.Row="2"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                </Grid>
+                
+            </StackPanel>
+
+
+        </Border>
+
+        <!--Income Overview bottom right corner-->
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Padding="10"
+                CornerRadius="15"
+                Background="#1B1F3A"
+                Margin="26,0,26,26">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Einnahmen"
+                               Grid.Column="0"
+                               FontSize="20"
+                               Margin="0,0,0,20"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    
+                    <DatePicker x:Name="DpIncome"
+                                Grid.Column="1"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Right"
+                                Margin="10,0,0,0"
+                                CalendarClosed="ShowIncomes"/>
+                    <ComboBox x:Name="CbIncomeInterval"
+                              Grid.Column="2"
+                              SelectedIndex="4"
+                              VerticalAlignment="Top"
+                              Height="21"
+                              VerticalContentAlignment="Center"
+                              Margin="10,2,0,0"
+                              DropDownClosed="ShowIncomes"
+                              Style="{StaticResource ComboBoxFilter}">
+                        <ComboBoxItem>Tag</ComboBoxItem>
+                        <ComboBoxItem>Woche</ComboBoxItem>
+                        <ComboBoxItem>Monat</ComboBoxItem>
+                        <ComboBoxItem>Jahr</ComboBoxItem>
+                        <ComboBoxItem>Insgesamt</ComboBoxItem>
+                    </ComboBox>
+                </Grid>
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Gehalt"  
+                               Grid.Column="0"
+                               FontSize="16"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtIncomeSalary"
+                               Text="-"
+                               Grid.Column="0"
+                               FontSize="15"
+                               Margin="0,20,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Freelancing"
+                               Grid.Column="1"
+                               FontSize="15"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtIncomeFreelance"
+                               Text="-"
+                               Grid.Column="1"
+                               FontSize="15"
+                               Margin="0,20,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Investitionen"  
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               FontSize="16"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtIncomeInvestion"
+                               Text="-"
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Verkauf"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               FontSize="15"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtIncomeSell"
+                               Text="-"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Zinsen"  
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               FontSize="16"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtIncomeInterest"
+                               Text="-"
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                    <TextBlock Text="Sonstiges"
+                               Grid.Column="1"
+                               Grid.Row="2"
+                               FontSize="15"
+                               Margin="0,10,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+                    <TextBlock x:Name="TxtIncomeOthers"
+                               Text="-"
+                               Grid.Column="1"
+                               Grid.Row="2"
+                               FontSize="15"
+                               Margin="0,30,0,0"
+                               Style="{StaticResource StandardizedTextBlock}"/>
+
+                </Grid>
+
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

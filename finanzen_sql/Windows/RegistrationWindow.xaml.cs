@@ -1,8 +1,9 @@
-﻿using finanzen_sql.utils;
+﻿using finanzen_sql.Tables;
+using finanzen_sql.utils;
+using MySqlConnector;
 using System.Diagnostics.Eventing.Reader;
 using System.Windows;
-using MySqlConnector;
-using finanzen_sql.Tables;
+using System.Windows.Input;
 
 
 namespace finanzen_sql.Windows;
@@ -81,5 +82,11 @@ public partial class RegistrationWindow : Window
         finanzDodo.Show();
 
         this.Close();
+    }
+
+    private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+            UserRegistration(sender, e);
     }
 }

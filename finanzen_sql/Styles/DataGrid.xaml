@@ -12,8 +12,8 @@
         <Setter Property="FontFamily" Value="Bahnschrift"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="RowHeight" Value="24"/>
-        <Setter Property="MaxWidth" Value="880"/>
-        <Setter Property="MaxHeight" Value="314"/>
+        <Setter Property="MaxWidth" Value="850"/>
+        <Setter Property="MaxHeight" Value="320"/>
         <Setter Property="MinColumnWidth" Value="130"/>
         <Setter Property="GridLinesVisibility" Value="None"/>
         <Setter Property="IsReadOnly" Value="True"/>
@@ -34,7 +34,7 @@
 
     <Style x:Key="DataGridTransactionRowStyle"
            TargetType="DataGridRow">
-        <Setter Property="Height" Value="36"/>
+        <Setter Property="Height" Value="34"/>
         <Setter Property="Margin" Value="2"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Style.Triggers>

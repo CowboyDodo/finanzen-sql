@@ -22,6 +22,12 @@ public partial class FinanzDodoWindow : Window
         // set userID in the PanelBuilds
         BuildAddPanel.user = _user;
         BuildTransactionPanel.user = _user;
+        BuildOverviewPanel.user = _user;
+
+        // neccessary because we need to display the user's budget with the initialization
+        // one time only
+        BuildOverviewPanel.LoadData();
+
     }
     private void CloseClick(object sender, RoutedEventArgs e)
     {
