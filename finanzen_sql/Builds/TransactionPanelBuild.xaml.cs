@@ -14,7 +14,7 @@ public class TransactionFilter
 {
     public int? CategoryId { get; set; }
     public string TypeFilter { get; set; } = "";
-    public required string IsRecurring { get; set; } = "";
+    public string IsRecurring { get; set; } = "";
 }
 
 public partial class TransactionPanelBuild : UserControl
